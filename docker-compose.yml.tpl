@@ -86,11 +86,6 @@ services:
         env_file:
             - ./.env
 
-    redis:
-        image: redis:alpine
-        ports:
-            - "6379:6379"
-
 ##########
 # COMMON #
 ##########
