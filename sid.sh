@@ -42,6 +42,9 @@ select yn in "Yes" "No"; do
 
               read -p "Enter the nextcloud admin password: " nextcloud_admin_password
               nextcloud_admin_password=${nextcloud_admin_password:-""}
+
+              read -P "Enter trust domain to grant access to the interface (default: localhost): " nextcloud_trusted_domain
+              nextcloud_trusted_domain=${nextcloud_trusted_domain:-localhost}
               break;;
         No ) echo "Configuring nextcloud with default value"
              nextcloud_db_type="sqlite3"
@@ -51,6 +54,7 @@ select yn in "Yes" "No"; do
              nextcloud_db_host="mariadb"
              nextcloud_admin_user="admin"
              nextcloud_admin_password="password"
+             nextcloud_trusted_domain="localhost"
              break;;
     esac
 done
@@ -80,6 +84,7 @@ DB_NAME=$nexrcloud_db_name
 DB_USER=$nextcloud_db_user
 DB_PASSWORD=$nextcloud_sql_password
 DB_HOST=$nextcloud_db_host
+TRUSTED_DOMAIN=$nextcloud_trusted_domain
 EOF
 
 cat > initdb.sql << EOF;
