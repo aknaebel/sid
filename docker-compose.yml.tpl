@@ -108,7 +108,8 @@ services:
         env_file:
             - ./.env
         restart: always
-
+        logging:
+            driver: syslog
 ##########
 # COMMON #
 ##########
