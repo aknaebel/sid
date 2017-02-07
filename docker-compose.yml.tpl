@@ -6,6 +6,8 @@ services:
     memcached:
         image: memcached:alpine
         restart: always
+        logging:
+            driver: syslog
 
     mariadb:
         image: mariadb
