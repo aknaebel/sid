@@ -5,6 +5,7 @@ services:
 ########
     memcached:
         image: memcached:alpine
+        restart: always
 
     mariadb:
         image: mariadb
@@ -13,6 +14,9 @@ services:
             - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
         environment:
             - MYSQL_ROOT_PASSWORD=##dbpassword##
+        restart: always
+        logging:
+            driver: syslog
 
     amavis:
         image: aknaebel/amavis
@@ -25,6 +29,9 @@ services:
         env_file:
           - ./.env
         container_name: amavis
+        restart: always
+        logging:
+            driver: syslog
 
     mail:
         image: aknaebel/mail
@@ -46,6 +53,12 @@ services:
             - "995:995"
             - "4190:4190"
         container_name: mail
+        restart: always
+        networks:
+            default:
+                ipv4_address: 172.18.0.10
+        logging:
+            driver: syslog
 
     vimbadmin:
         image: aknaebel/vimbadmin
@@ -59,6 +72,9 @@ services:
             - ./.env
         environment:
             APPLICATION_ENV: production
+        restart: always
+        logging:
+            driver: syslog
 
     opendkim:
         image: aknaebel/opendkim
@@ -68,6 +84,9 @@ services:
             - ./docker-opendkim/data/TrustedHosts:/etc/opendkim/TrustedHosts
             - ./docker-opendkim/data/keys:/tmp/keys
         container_name: opendkim
+        restart: always
+        logging:
+            driver: syslog
 
 #############
 # NEXTCLOUD #
@@ -83,8 +102,10 @@ services:
         links:
             - mariadb
             - mail
+            - amavis
         env_file:
             - ./.env
+        restart: always
 
 ##########
 # COMMON #
@@ -104,3 +125,15 @@ services:
         ports:
             - "80:80"
             - "443:443"
+        restart: always
+        logging:
+            driver: syslog
+
+networks:
+    default:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.18.0.0/16
+                  gateway: 172.18.0.1
